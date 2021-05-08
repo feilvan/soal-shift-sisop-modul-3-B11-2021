@@ -15,62 +15,8 @@
 #include <pthread.h>
 #include <ctype.h>
 
-pthread_t thread[1000];
-int many =1;
-void *myFile (void *judulFiles) {
-    char *file;
-    char judulBaru[2000];
-    char *judulFiles1 = (char*) judulFiles;
-    snprintf(judulBaru, sizeof judulBaru, "%s", judulFiles1);
-    char *judul = judulFiles;
-    file = strtok(judul, ".");
-    
-    if(strcmp(ext, judulBaru)==0){
-        file = "unknown";
-    }
-    else{
-        file = strtok(NULL, "");
-    }
-    
-    
-    int hasil; 
-    hasil = rename (judulBaru,lokasiPindah);
-     if(hasil == 0) 
-   {
-      printf("File %d : Berhasil Dikategorikan\n",many);
-   }
-   else 
-   {
-      printf("File %d : Sad,gagal :(\n",many);
-   }
-   many++;
-
-}
 
 
-
-int main(int argc, char *argv[]) {
-  
- 
-  if (strcmp(argv[1],"-f")==0){  
-    int jumlah = 2;
-    int jalankan = 2;
-    while (jumlah < argc) {
-      pthread_create(&(thread[jumlah]), NULL, myFile, (char*)argv[jumlah]);
-      jumlah++;
-    }
-    while (jalankan < argc) {
-      pthread_join(thread[jalankan],NULL);
-      jalankan++;
-    }
-  }
-  
-  else if (strcmp(argv[1],"-d") == 0 ) { 
-        
-  }
-  
-  return 0;
-}
 
 char cwd[100];
 pthread_t tid[10]; 
@@ -101,6 +47,16 @@ void* moveandmake(void *arg)
     strcpy(file,arr[n-1]);
     for(int i = 0; file[i]; i++){
         file[i] = tolower(file[i]); //case sensitive
+    }
+    if (strcmp(argv[1],"-f")==0){  
+    int sum= 2, run = 2;
+    while (sum < argc) {
+      pthread_create(&(thread[jumlah]), NULL, myFile, (char*)argv[jumlah]);
+      sum++;
+    }
+    while (jalankan < argc) {
+      pthread_join(thread[jalankan],NULL);
+    sum++;
     }
   
     DIR *folder, *folderopen;
@@ -136,31 +92,23 @@ void* moveandmake(void *arg)
     }
  
 
-    char source[1024], target[1024];
-
-
-    strcpy(source,arg);
-    strcpy(target,cwd);
-    strcat(target,"/");
-    if(n == 1 ){
-        strcat(target,"Unknown");
-    }
-    else{
-        strcat(target,file);
-    }
-    strcat(target,"/");
-    strcat(target,arr3);
-    rename(source,target);
-    n = 0;
-    m = 0;
 
  return NULL;
 }
 
+
 int main(int argc, char *argv[]) {
-    if(getcwd(cwd, sizeof(cwd)) != NULL) {
-        printf("Current working dir: %s\n", cwd);
-    } 
+    int many =1
+        
+     if(getcwd(cwd, sizeof(cwd)) != NULL) 
+   {
+      printf("File %d : Berhasil Dikategorikan\n",many);
+   }
+   else 
+   {
+      printf("File %d : Sad,gagal :(\n",many);
+   }
+   many++;
     int i=0,j=0;
     if (strcmp(argv[1],"-f") == 0) {
         for(j = 2 ; j < argc ; j++ ){
