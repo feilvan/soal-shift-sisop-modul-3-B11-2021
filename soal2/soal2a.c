@@ -47,10 +47,17 @@ int main () {
     }
 
     // Shared Memory --------------------------------------------
-    key_t key = 1234;
-    int segid=shmget(key, sizeof(int), IPC_CREAT | 0666);
-    int *matrix;
-    matrix = (int *)shmat(segid,NULL,0);
+    int segid1=shmget(1234, sizeof(int), IPC_CREAT | 0666);
+    int segid2=shmget(1235, sizeof(int), IPC_CREAT | 0666);
+    int segid3=shmget(1236, sizeof(int), IPC_CREAT | 0666);
+    int *matrix, *row, *column;
+
+    matrix = (int *)shmat(segid1,NULL,0);
+    row = (int *)shmat(segid2,NULL,0);
+    column = (int *)shmat(segid3,NULL,0);
+
+    *row = r3;
+    *column = c3;
 
     for(int i=0;i<r1;++i){
         for(int j=0;j<c2;++j){
@@ -61,6 +68,10 @@ int main () {
     sleep(10);
 
     shmdt(matrix);
-    shmctl(segid,IPC_RMID,NULL);
+    shmdt(row);
+    shmdt(column);
+    shmctl(segid1,IPC_RMID,NULL);
+    shmctl(segid2,IPC_RMID,NULL);
+    shmctl(segid3,IPC_RMID,NULL);
     return 0;
 }
