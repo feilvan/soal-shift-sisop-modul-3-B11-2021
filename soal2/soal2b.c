@@ -75,7 +75,7 @@ int main(int argc,char *argv[])
         for (int j=0; j<(*c); j++)
             pthread_join(tid[i*(*c)+j],NULL);
 
-    // Print matrixfinal
+    // Print matrixfinal --------------------------------------------
     printf("\n");
     for (int i=0; i<*row; i++) {
         for (int j=0; j<*column; j++)
@@ -83,6 +83,7 @@ int main(int argc,char *argv[])
         printf("\n");
     }
     
+    // Detach shared memory --------------------------------------------
     shmdt(matrix);
     shmdt(row);
     shmdt(column);
