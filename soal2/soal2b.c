@@ -19,7 +19,6 @@ int main(int argc,char *argv[])
 {
 
     // Init shared memory --------------------------------------------
-    key_t key = 1234;
     int segid1=shmget(1234, sizeof(int), IPC_CREAT | 0666);
     int segid2=shmget(1235, sizeof(int), IPC_CREAT | 0666);
     int segid3=shmget(1236, sizeof(int), IPC_CREAT | 0666);
@@ -70,10 +69,6 @@ int main(int argc,char *argv[])
             args[i*(*c)+j].b = mbaru[i*(*c)+j];
             pthread_create(&tid[i*(*c)+j],NULL,&faktorial,(void*)&args[i*(*c)+j]);
         }
-
-    for (int i=0; i<(*r); i++)
-        for (int j=0; j<(*c); j++)
-            pthread_join(tid[i*(*c)+j],NULL);
 
     // Print matrixfinal --------------------------------------------
     printf("\n");
