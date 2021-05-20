@@ -70,6 +70,10 @@ int main(int argc,char *argv[])
             pthread_create(&tid[i*(*c)+j],NULL,&faktorial,(void*)&args[i*(*c)+j]);
         }
 
+    for (int i=0; i<(*r); i++)
+        for (int j=0; j<(*c); j++)
+            pthread_join(tid[i*(*c)+j], NULL);
+
     // Print matrixfinal --------------------------------------------
     printf("\n");
     for (int i=0; i<*row; i++) {
@@ -96,3 +100,35 @@ void *faktorial (void *arg){
         for (int i=1; i<args->b && i<args->a; i++)
             matrixfinal[args->x] = matrixfinal[args->x] * (args->a-i);
 }
+
+/* Input urut 1-20 --------------------------------------------
+1 2 3
+4 5 6
+7 8 9
+10 11 12
+
+1 2 3 4 5 6
+7 8 9 10 11 12
+13 14 15 16 17 18
+
+1 0 2 1 3 1
+3 0 0 1 2 1
+4 2 1 5 2 0
+1 4 2 1 3 2
+*/
+
+/* Input 1 semua --------------------------------------------
+1 1 1
+1 1 1
+1 1 1
+1 1 1
+
+1 1 1 1 1 1
+1 1 1 1 1 1
+1 1 1 1 1 1
+
+1 0 2 1 3 1
+3 0 0 1 2 1
+4 2 1 5 2 0
+1 4 2 1 3 2
+*/
