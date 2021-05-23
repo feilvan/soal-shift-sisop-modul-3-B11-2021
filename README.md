@@ -549,7 +549,31 @@ else if (strcmp(argv[1],"-d") == 0 ) {
     } 
  ```
   Di sini, program mengecek terlebih dahulu argv[1], apabila merupakan '-d' maka kode tersebut akan mengerjakan kode tersebut dan memasukkannya ke thread yang dibuat.  Di sini juga digunakan pthread_join untuk memastikan program telah selesai tereksekusi baru melanjut ke yang berikutnya. Lalu, apabila direktori sukses ataupun gagal, program akan memberi output pemberitahuan.
- 
+
+### 3.c
+ Pada soal 3.c, apabila argumen yang diterima adalah "*" program akan mengkategorikan semua file yang ada pada working directory ke dalam folder berdasarkan eksistensinya.
+```c 
+else if (strcmp(argv[1],"*") == 0 ) { 
+       perintah = argv[1];
+       recursive(".");
+       for(int i=0; i<nomor; i++){
+           pthread_create(&(thread[i]), NULL, myFile, (char*)namaFilesNih[i]);
+       }
+       for(int i=0; i<nomor; i++){
+           pthread_join(thread[i],NULL);
+       }
+       if(keberhasilan == 1){
+           printf("Direktori sukses disimpan!\n");
+       }else{
+           printf("Yah, gagal disimpan :(\n");
+       }
+   }
+   
+   return 0;
+}
+```
+ Di sini, program mengecek terlebih dahulu argv[1], apabila merupakan '*' maka program tersebut akan mengerjakan kode tersebut dan memasukkannya ke thread yang dibuat.  Di sini juga digunakan pthread_join untuk memastikan program telah selesai tereksekusi baru melanjut ke yang berikutnya. Lalu, apabila direktori sukses ataupun gagal, program akan memberi output pemberitahuan.
+
 Untuk melakukan traverse directory, maka dibuatkan fungsi recursive berikut.
 ```c 
  void recursive(char *basePath) //traverse direktori
@@ -579,31 +603,7 @@ Untuk melakukan traverse directory, maka dibuatkan fungsi recursive berikut.
 }
 ```
  Di sini, dibuat pointer untuk menunjuk ke directory, lalu dilakukan looping untuk directory yang mana dalam directory tersebut ada file/folder didalamnya.
-
-### 3.c
- Pada soal 3.c, apabila argumen yang diterima adalah "*" program akan mengkategorikan semua file yang ada pada working directory ke dalam folder berdasarkan eksistensinya.
-```c 
-else if (strcmp(argv[1],"*") == 0 ) { 
-       perintah = argv[1];
-       recursive(".");
-       for(int i=0; i<nomor; i++){
-           pthread_create(&(thread[i]), NULL, myFile, (char*)namaFilesNih[i]);
-       }
-       for(int i=0; i<nomor; i++){
-           pthread_join(thread[i],NULL);
-       }
-       if(keberhasilan == 1){
-           printf("Direktori sukses disimpan!\n");
-       }else{
-           printf("Yah, gagal disimpan :(\n");
-       }
-   }
-   
-   return 0;
-}
-```
- Di sini, program mengecek terlebih dahulu argv[1], apabila merupakan '*' maka program tersebut akan mengerjakan kode tersebut dan memasukkannya ke thread yang dibuat.  Di sini juga digunakan pthread_join untuk memastikan program telah selesai tereksekusi baru melanjut ke yang berikutnya. Lalu, apabila direktori sukses ataupun gagal, program akan memberi output pemberitahuan.
-
+ 
 ### 3.d dan 3.e
  Pada soal ini, semua file harus berada di dalam folder, jika terdapat file yang tidak memiliki ekstensi, file disimpan dalam folder “unknown”. Jika file hidden, masuk folder “hidden”. Dimana, setiap 1 file yang dikategorikan dioperasikan oleh 1 thread agar bisa berjalan secara paralel sehingga proses kategori bisa berjalan lebih cepat.
 ```c 
