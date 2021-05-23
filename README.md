@@ -5,7 +5,279 @@ Anggota kelompok :
 * 05111940000095 - Fuad Elhasan Irfani
 * 05111940000107 - Sabrina Lydia Simanjuntak
 
-## Soal 1
+### 1.a
+#### Server dapat menerima lebih dari 1 koneksi Client sekaligus, namun hanya 1 Client yang dapat menggunakan fungsi-fungsi program. Client ke-2 dan seterusnya harus menunggu sampai Client pertama log out.
+
+Client diminta id dan password saat register -> disimpan di file akun.txt
+
+```c
+id:password
+id2:password2
+```
+Client diminta id dan password saat login -> dicocokkan dengan id:password yang ada di file akun.txt
+#### Penjelasan
+##### Konesi Client-Server
+Pakai template koneksi socket Client dan Server yang ada di modul 3.
+Pakai thread untuk dapat memungkinkan terjadinya >1 koneksi Client ke Server.
+```c
+while(true) {
+  if ((new_socket = accept(server_fd, 
+      (struct sockaddr *) &address, (socklen_t*) &addr_len)) < 0) {
+      perror("accept");
+      exit(EXIT_FAILURE);
+  }
+  pthread_create(&(tid[total]), NULL, &client, &new_socket);
+  total++;
+}
+```
+Simpan jumlah Client yang sedang terkoneksi pada suatu variabel.
+
+Tentukan apakah Client akan di terima atau di tahan aksesnya ke fungsi program berdasarkan jumlah koneksi.
+```c
+if (total == 1) {
+  send(new_socket, hello, STR_SIZE, 0);
+}
+else {
+    send(new_socket, deny, STR_SIZE, 0);
+}
+```
+Di Client, akan diperiksa pesan yang diterima dari Server.
+```c
+while (!equal(hello, buffer))
+```
+jika Server tidak mengirim pesan yang menandakan Client dapat menggunakan program, tunggu di while loop.
+Kembali di sisi Server, selain meng-handle Client pertama, buat Client tersebut untuk menunggu.
+```c
+while (total > 1) {
+  valread = read(new_socket, buffer, STR_SIZE);
+  if (total == 1) {
+      send(new_socket, hello, STR_SIZE, 0);
+  }
+  else {
+      send(new_socket, deny, STR_SIZE, 0);
+  }
+}
+```
+![client wait](https://user-images.githubusercontent.com/73324192/119247216-f93c0d80-bbb1-11eb-88f8-223318aa2310.png)
+
+Ketika meng-handle Client pertama, siapkan Server untuk menunggu command dari Client. Seperti: login, register, dst.
+![client connected](https://user-images.githubusercontent.com/73324192/119247240-1bce2680-bbb2-11eb-8d87-d5b9cbf6daf9.png)
+
+Ketika Client memutus koneksinya, decrement jumlah koneksi
+```c
+else if (equal(quit, buffer)) {
+  close(new_socket);
+  total--;
+  break;
+}
+```
+Terima Client yang sedang menunggu apabila menjadi koneksi pertama
+![client finally connected](https://user-images.githubusercontent.com/73324192/119247255-2dafc980-bbb2-11eb-8245-c3330c46392a.png)
+
+##### Fungsi register
+Client mengirimkan command register ke Server.
+Server menerima command dan menyiapkan file akun.txt.
+```c
+fp2 = fopen("akun.txt", "a");
+```
+Client-Server kirim-terima username dan password yang ingin di-register
+
+![register](https://user-images.githubusercontent.com/73324192/119247272-46b87a80-bbb2-11eb-9e86-55ab894e5c95.png)
+
+fprintf-kan user creds yang baru ke file akun.txt.
+Close file dan akun telah diregister.
+##### Fungsi login
+Client mengirimkan command login ke Server.
+Server menerima command.
+Client-Server kirim-terima username dan password.
+![login (2)](https://user-images.githubusercontent.com/73324192/119247291-68b1fd00-bbb2-11eb-8618-df3a5cb4cbb3.png)
+
+Server membuka file akun.txt.
+Baca file line-by-line dan cari login credentials yang sesuai.
+```c
+while ((file_read = getline(&line, &len, fp3) != -1))
+```
+Kirim pesan ke Client apakah login berhasil atau tidak.
+Jika login berhasil, siapkan Client-Server untuk command add, download, dst.
+![login](https://user-images.githubusercontent.com/73324192/119247295-723b6500-bbb2-11eb-8630-0d981f638f60.png)
+
+### 1.b
+#### Di Server terdapat files.tsv yang menyimpan path file di server, publisher, tahun publikasi. files.tsv di-update setiap ada operasi add dan delete files. Folder FILES yang menyimpan semua file yang dikirimkan oleh Client, otomatis dibuat saat server dijalankan.
+
+#### Penjelasan
+##### files.tsv
+Pada operasi penambahan file, tambahkan kode yang akan membuat file files.tsv.
+Perubahan pada file tersebut akan dijelaskan lebih lanjut pada bagian soal selanjutnya.
+##### folder FILES
+Buat folder FILES setelah Server dijalankan.
+
+### 1.c
+#### Membuat fitur agar client dapat menambah file baru ke dalam server
+#### Penjelasan
+##### Command add dari Client
+Client menerima command dan meneruskannya ke Server.
+Server bersiap untuk menerima detail dari file.
+Client mengirimkan detail dari file.
+
+![add](https://user-images.githubusercontent.com/73324192/119247303-82534480-bbb2-11eb-9604-8fcf64bbc91b.png)
+
+##### Pengiriman file ke Server
+Client membuka file dan mengirimkan file ke Server
+```c
+int fd = open(data, O_RDONLY);
+if (!fd) {
+  perror("can't open");
+  exit(EXIT_FAILURE);
+}
+
+int read_len;
+while (true) {
+  memset(data, 0x00, STR_SIZE);
+  read_len = read(fd, data, STR_SIZE);
+
+  if (read_len == 0) {
+    break;
+  }
+  else {
+    send(sock, data, read_len, 0);                               
+  }
+}
+close(fd);
+```
+Server menerima file dan menyimpannya
+```c
+int des_fd = open(request.path, O_WRONLY | O_CREAT | O_EXCL, 0700);
+if (!des_fd) {
+  perror("can't open file");
+  exit(EXIT_FAILURE);
+}
+```
+![struktur files](https://user-images.githubusercontent.com/73324192/119247320-9b5bf580-bbb2-11eb-852f-f95b046c8259.png)
+
+##### Penambahan detail file di files.tsv
+Server menerima detail file terlebih dahulu
+```c
+valread = read(new_socket, request.publisher, STR_SIZE);
+valread = read(new_socket, request.year, STR_SIZE);
+valread = read(new_socket, clientPath, STR_SIZE);
+```
+Server memproses file path dari Client dan memodifikasinya agar dapat menyimpan file di FILES/nama_file.extension.
+Server membuka files.tsv dan menambahkan detail file.
+```c
+fp = fopen("files.tsv", "a");
+fprintf(fp, "%s\t%s\t%s\n", request.path, request.publisher, request.year);
+fclose(fp);
+```
+![files tsv](https://user-images.githubusercontent.com/73324192/119247324-a9117b00-bbb2-11eb-9459-0cd21f242b7f.png)
+
+### 1.d
+#### Membuat fitur agar client dapat mendownload file yang ada di Server -> check di files.tsv
+#### Penjelasan
+##### Download file
+Solusi dari download sangat serupa dengan solusi dari add, hanya saja peran Client-Server dibalik.
+Client mengirimkan command download nama_file.extension.
+Server menerima command dan mencari nama file di files.tsv.
+
+![download](https://user-images.githubusercontent.com/73324192/119247400-42d92800-bbb3-11eb-9f4d-f7d61c630392.png)
+
+![download not found](https://user-images.githubusercontent.com/73324192/119247406-48367280-bbb3-11eb-9620-616cf740f94e.png)
+
+Server akan mengirimkan file ke Client jika ada file yang diminta.
+### 1.e
+#### Client mengirimkan command delete nama_file.extension.Jika file ada, file hanya di-rename menjadi old-nama_file.extension. Hapus file dari list pada files.tsv
+#### Penjelasan
+##### Client send command
+Client mengirimkan command delete dan nama file yang ingin di-delete
+
+Server menerima command dan mengecek apakah ada file tersebut di files.tsv
+
+![delete](https://user-images.githubusercontent.com/73324192/119247415-6b612200-bbb3-11eb-8061-fa1bc1f57e61.png)
+
+![delete not found](https://user-images.githubusercontent.com/73324192/119247417-7025d600-bbb3-11eb-89ee-8e928ed243fb.png)
+
+##### Rename file
+jika ada file yang ingin dihapus, rename nama file
+```c
+found = true;
+char old[] = "FILES/old-";
+strcat(old, temp_entry.name);
+rename(temp_entry.path, old);
+```
+##### Ubah files.tsv
+Selama membaca files.tsv, simpan pada baris ke-berapa terdapat detail dari file yang dihapus
+Buat fungsi untuk menghapus baris tertentu di files.tsv
+```c
+removeLine(index);
+```
+fungsi merupakan modifikasi dari fungsi yang ditemukan di-web. https://www.w3resource.com/c-programming-exercises/file-handling/c-file-handling-exercise-8.php
+### 1.f
+#### Client dapat melihat semua isi files.tsv dengan memanggil suatu perintah yang bernama see
+#### Penjelasan
+##### Client mengirimkan command see
+Client-Server kirim-terima command
+Server membuka files.tsv
+##### Output di client
+Server membaca files.tsv line-by-line
+Server memproses tiap line agar mendapatkan informasi yang diperlukan
+Selama masih ada baris untuk diproses, kirim informasi ke Client
+
+```c
+char message[STR_SIZE];
+sprintf(message, "Nama : %s\nPublisher : %s\nTahun Publishing : %s\nEkstensi File : %s\nFilepath : %s\n\n", 
+  temp_entry.name, temp_entry.publisher, temp_entry.year, ext, temp_entry.path);
+                          
+send(new_socket, message, STR_SIZE, 0);
+```
+Client menerima informasi dari Server selama masih ada informasi untuk diterima
+
+![see](https://user-images.githubusercontent.com/73324192/119247453-c1ce6080-bbb3-11eb-9cdd-3bdaaa61ccd3.png)
+
+### 1.g
+#### Client menerima detail files yang mengandung string yang dikirimkan
+#### Penjelasan
+##### Client send command
+Client-Server kirim-terima
+Server membaca files.tsv line-by-line
+Manfaatkan strstr agar sesuai dengan apa yang diminta soal
+```c
+if ((h = strstr(temp_entry.name, buffer)) != NULL)
+```
+### 1.h
+#### Tiap operasi add dan delete, log di running.log
+#### Penjelasan
+##### log tiap add dan delete
+Buat fungsi untuk memudahkan penambahan log di running.log
+```c
+void log_action(char *type, char *fileName, char *user, char *pass) {
+    FILE *log;
+    char action[16];
+
+    if (equal(type, "add")) {
+        strcpy(action, "Tambah");
+    }
+    else if (equal(type, "delete")) {
+        strcpy(action, "Hapus");
+    }
+
+    log = fopen("running.log", "a");
+    fprintf(log, "%s : %s (%s:%s)\n", action, fileName, user, pass);
+    fclose(log);
+
+    return;
+}
+```
+Fungsi menerima apa tipe operasinya (add/delete), file apa yang terpengaruh, siapa yang melakukannya beserta passwordnya
+ketika Server memproses add dan delete, panggil fungsi tersebut
+```c
+log_action("add", request.name, akun.name, akun.password);
+```
+Panggil fungsi ketika terjadi file addition
+```c
+log_action("delete", temp_entry.name, akun.name, akun.password);
+```
+Panggil fungsi ketika terjadi deletion
+
+![running log](https://user-images.githubusercontent.com/73324192/119247470-f3dfc280-bbb3-11eb-9545-9fad20f956e5.png)
 
 ## Soal 2
 ### 2.a
