@@ -507,10 +507,10 @@ Berikut screenshot saat program dijalankan. Terbukti outputnya sama dengan memas
 Kurang paham dengan cara kerja pipes. Jadi saya mencari banyak referensi dan melakukan cukup banyak trial & error.
 
 ## Soal 3
-#### Ayub menyarankan untuk membuat sebuah program C agar file-file dapat dikategorikan sesuai dengan ekstensinya. Program ini akan memindahkan file sesuai ekstensinya ke dalam folder sesuai ekstensinya yang folder hasilnya terdapat di working directory ketika program kategori tersebut dijalankan. Apabila file tersebut tidak memiliki ekstensi maka file tersebut akan dipindahkan ke folder Unknown. Terdapat tiga mode untuk mengkategorikan file, yaitu -f, *, dan -d.
+ Ayub menyarankan untuk membuat sebuah program C agar file-file dapat dikategorikan sesuai dengan ekstensinya. Program ini akan memindahkan file sesuai ekstensinya ke dalam folder sesuai ekstensinya yang folder hasilnya terdapat di working directory ketika program kategori tersebut dijalankan. Apabila file tersebut tidak memiliki ekstensi maka file tersebut akan dipindahkan ke folder Unknown. Terdapat tiga mode untuk mengkategorikan file, yaitu -f, *, dan -d.
 
 ### 3.a
-#### Pada soal 3.a, apabila argumennya adalah "-f", maka program akan mengkategorikan file yang ada pada argumen ke dalam folder berdasarkan ekstensi file tersebut, dan folder berada pada working directory program.
+ Pada soal 3.a, apabila argumennya adalah "-f", maka program akan mengkategorikan file yang ada pada argumen ke dalam folder berdasarkan ekstensi file tersebut, dan folder berada pada working directory program.
 ```c
 if (strcmp(argv[1],"-f")==0){  
         perintah = argv[1];
@@ -526,10 +526,10 @@ if (strcmp(argv[1],"-f")==0){
         }
     }
   ```
-####  Di sini program mengecek terlebih dahulu argv[1], apabila merupakan '-f' maka kode tersebut akan melakukan looping sebanyak argumen file yang diinput dan memasukkannya ke thread yang dibuat untuk memindahkan file. Di sini juga digunakan pthread_join untuk memastikan program telah selesai tereksekusi baru melanjut ke yang berikutnya.
+  Di sini program mengecek terlebih dahulu argv[1], apabila merupakan '-f' maka kode tersebut akan melakukan looping sebanyak argumen file yang diinput dan memasukkannya ke thread yang dibuat untuk memindahkan file. Di sini juga digunakan pthread_join untuk memastikan program telah selesai tereksekusi baru melanjut ke yang berikutnya.
 
 ### 3.b
-#### Pada 3.b, apabila argumen yang diterima adalah "-d", maka program akan mengkategorikan semua file pada folder yang diberikan pada argumen ke dalam folder berdasarkan ekstensi file tersebut, dan folder berada pada working directory program.
+ Pada 3.b, apabila argumen yang diterima adalah "-d", maka program akan mengkategorikan semua file pada folder yang diberikan pada argumen ke dalam folder berdasarkan ekstensi file tersebut, dan folder berada pada working directory program.
 ```c
 else if (strcmp(argv[1],"-d") == 0 ) { 
         perintah = argv[1];
@@ -547,9 +547,9 @@ else if (strcmp(argv[1],"-d") == 0 ) {
         }
     } 
  ```
- ####  Di sini, program mengecek terlebih dahulu argv[1], apabila merupakan '-d' maka kode tersebut akan mengerjakan kode tersebut dan memasukkannya ke thread yang dibuat.  Di sini juga digunakan pthread_join untuk memastikan program telah selesai tereksekusi baru melanjut ke yang berikutnya. Lalu, apabila direktori sukses ataupun gagal, program akan memberi output pemberitahuan.
+  Di sini, program mengecek terlebih dahulu argv[1], apabila merupakan '-d' maka kode tersebut akan mengerjakan kode tersebut dan memasukkannya ke thread yang dibuat.  Di sini juga digunakan pthread_join untuk memastikan program telah selesai tereksekusi baru melanjut ke yang berikutnya. Lalu, apabila direktori sukses ataupun gagal, program akan memberi output pemberitahuan.
  
- #### Untuk melakukan traverse directory, maka dibuatkan fungsi recursive berikut.
+Untuk melakukan traverse directory, maka dibuatkan fungsi recursive berikut.
 ```c 
  void recursive(char *basePath) //traverse direktori
 {
@@ -577,10 +577,10 @@ else if (strcmp(argv[1],"-d") == 0 ) {
  closedir(dir);
 }
 ```
-#### Di sini, dibuat pointer untuk menunjuk ke directory, lalu dilakukan looping untuk directory yang mana dalam directory tersebut ada file/folder didalamnya.
+ Di sini, dibuat pointer untuk menunjuk ke directory, lalu dilakukan looping untuk directory yang mana dalam directory tersebut ada file/folder didalamnya.
 
 ### 3.c
-#### Pada soal 3.c, apabila argumen yang diterima adalah "*" program akan mengkategorikan semua file yang ada pada working directory ke dalam folder berdasarkan eksistensinya.
+ Pada soal 3.c, apabila argumen yang diterima adalah "*" program akan mengkategorikan semua file yang ada pada working directory ke dalam folder berdasarkan eksistensinya.
 ```c 
 else if (strcmp(argv[1],"*") == 0 ) { 
        perintah = argv[1];
@@ -601,10 +601,10 @@ else if (strcmp(argv[1],"*") == 0 ) {
    return 0;
 }
 ```
-#### Di sini, program mengecek terlebih dahulu argv[1], apabila merupakan '*' maka program tersebut akan mengerjakan kode tersebut dan memasukkannya ke thread yang dibuat.  Di sini juga digunakan pthread_join untuk memastikan program telah selesai tereksekusi baru melanjut ke yang berikutnya. Lalu, apabila direktori sukses ataupun gagal, program akan memberi output pemberitahuan.
+ Di sini, program mengecek terlebih dahulu argv[1], apabila merupakan '*' maka program tersebut akan mengerjakan kode tersebut dan memasukkannya ke thread yang dibuat.  Di sini juga digunakan pthread_join untuk memastikan program telah selesai tereksekusi baru melanjut ke yang berikutnya. Lalu, apabila direktori sukses ataupun gagal, program akan memberi output pemberitahuan.
 
 ### 3.d dan 3.e
-#### Pada soal ini, semua file harus berada di dalam folder, jika terdapat file yang tidak memiliki ekstensi, file disimpan dalam folder “unknown”. Jika file hidden, masuk folder “hidden”. Dimana, setiap 1 file yang dikategorikan dioperasikan oleh 1 thread agar bisa berjalan secara paralel sehingga proses kategori bisa berjalan lebih cepat.
+ Pada soal ini, semua file harus berada di dalam folder, jika terdapat file yang tidak memiliki ekstensi, file disimpan dalam folder “unknown”. Jika file hidden, masuk folder “hidden”. Dimana, setiap 1 file yang dikategorikan dioperasikan oleh 1 thread agar bisa berjalan secara paralel sehingga proses kategori bisa berjalan lebih cepat.
 ```c 
  if(namaFiles[0]=='.'){
        ext = "hidden";
@@ -619,9 +619,9 @@ else if (strcmp(argv[1],"*") == 0 ) {
            }
        }
   ```
- #### Pada bagian ini, dicek, apabila file berawalan '.' maka file tersebut terkategorikan hidden. Lalu, file juga dicek menggunakan strtok, apabila file tidak memiliki ekstensi, maka akan dikategorikan 'unknown'
+ Pada bagian ini, dicek, apabila file berawalan '.' maka file tersebut terkategorikan hidden. Lalu, file juga dicek menggunakan strtok, apabila file tidak memiliki ekstensi, maka akan dikategorikan 'unknown'
  
- #### Berikut merupakan merupakan isi dari thread myFile yang mengkategorikan suatu file dan untuk mendapatkan nama file beserta ekstensinya. Sementara kode di bawah ini untuk mendapatkan ekstensi dari file tersebut.
+ Berikut merupakan merupakan isi dari thread myFile yang mengkategorikan suatu file dan untuk mendapatkan nama file beserta ekstensinya. Sementara kode di bawah ini untuk mendapatkan ekstensi dari file tersebut.
  ```c 
     pthread_t thread[1000];
     void *myFile (void *judulFiles) {
@@ -636,12 +636,12 @@ else if (strcmp(argv[1],"*") == 0 ) {
     char namaFilesLama[10000];
     snprintf(namaFilesLama, sizeof namaFilesLama, "%s", namaFiles);
  ```
- #### Pada soal juga diminta bahwa ekstensinya tidak case sensitive, maka digunakan kode berikut untuk mengubah apabila terdapat huruf kapital menjadi huruf kecil.
+ Pada soal juga diminta bahwa ekstensinya tidak case sensitive, maka digunakan kode berikut untuk mengubah apabila terdapat huruf kapital menjadi huruf kecil.
       ```c 
       for (int i=0;i < strlen(ext);i++){
                 ext[i] = tolower(ext[i]);
             }
       ```
   
- ### Kendala
- #### Kendala dalam mengerjakan soal ini adalah agak kebingungan saat file-file yang ada tidak masuk ke dalam folder. Lalu agak bingung dalam menentukan file hidden karena tidak ada contohnya dan bingung file seperti apa yang masuk ke kategori hidden. 
+ #### Kendala
+ Kendala dalam mengerjakan soal ini adalah agak kebingungan saat file-file yang ada tidak masuk ke dalam folder. Lalu agak bingung dalam menentukan file hidden karena tidak ada contohnya dan bingung file seperti apa yang masuk ke kategori hidden. 
