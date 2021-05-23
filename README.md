@@ -5,6 +5,7 @@ Anggota kelompok :
 * 05111940000095 - Fuad Elhasan Irfani
 * 05111940000107 - Sabrina Lydia Simanjuntak
 
+## Soal 1
 ### 1.a
 #### Server dapat menerima lebih dari 1 koneksi Client sekaligus, namun hanya 1 Client yang dapat menggunakan fungsi-fungsi program. Client ke-2 dan seterusnya harus menunggu sampai Client pertama log out.
 
