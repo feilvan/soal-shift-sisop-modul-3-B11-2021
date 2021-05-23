@@ -10,74 +10,131 @@
 
 pthread_t thread[1000];
 int many =1;
+char *perintah;
+int keberhasilan = 1;
+//
 void *myFile (void *judulFiles) {
     char *ext;
     char judulBaru[2000];
     char *judulFiles1 = (char*) judulFiles;
     snprintf(judulBaru, sizeof judulBaru, "%s", judulFiles1);
     char *judul = judulFiles;
-    ext = strtok(judul, ".");
-    if(strcmp(ext, judulBaru)==0){
-        ext = "unknown";
+    char *namaFiles;
+    namaFiles = strrchr(judulFiles, '/');
+    namaFiles = strtok(namaFiles, "/");
+    char namaFilesLama[10000];
+    snprintf(namaFilesLama, sizeof namaFilesLama, "%s", namaFiles);
+    if(namaFiles[0]=='.'){
+        ext = "hidden";
     }else{
-        ext = strtok(NULL, "");
+        namaFiles = strtok(namaFiles, ".");
+        if(strcmp(namaFilesLama, namaFiles)==0){
+            ext = "unknown"; 
+        }else{
+            ext = strtok(NULL, "");
+            for (int i=0;i < strlen(ext);i++){
+                ext[i] = tolower(ext[i]);
+            }
+        }
     }
-     
-     //buat folder berdasarkan ekstensinya
-     
-    char lokasiPindah[10000];
-    const char ch = '/';
-    char *ret;
-    char *namaFile;
-    ret = strrchr(judulBaru, ch);
-    
-    if (ret != NULL) {
-        namaFile = strtok (ret,"/");
-       // printf ("%s\n",namaFile);
-    
+    mkdir (ext,0777);
+    char pindah[20000];
+    snprintf(pindah, sizeof pindah, "%s/%s", ext, namaFilesLama);
+    int hasil;
+    hasil = rename(judulBaru, pindah);
+    if(strcmp(perintah, "-f")==0){
+        if(hasil == 0) {
+            printf("File %d : Berhasil Dikategorikan\n",many);
+        }else{
+            printf("File %d : Sad,gagal :(\n",many);
+        }
+        many++;
+    }else{
+        if(hasil != 0){
+            keberhasilan = 0;
+        }
     }
-    if (namaFile[0]=='.'){
-      ext="hidden";
-    }
-    mkdir(ext,0777);
-    snprintf(lokasiPindah,sizeof lokasiPindah,"%s/%s",ext,namaFile);
-    
-
-    int hasil; 
-    hasil = rename(judulBaru,lokasiPindah);
-     if(hasil == 0) 
-   {
-      printf("File %d : Berhasil Dikategorikan\n",many);
-   }
-   else 
-   {
-      printf("File %d : Sad,gagal :(\n",many);
-   }
-   many++;
 }
 
+char namaFilesNih[10000][10000];
+
+int nomor = 0;
+void recursive(char *basePath)
+{
+    char path[1000];
+    struct dirent *dp;
+    DIR *dir = opendir(basePath);
+
+    if (!dir)
+        return;
+
+    while ((dp = readdir(dir)) != NULL)
+    {
+        if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
+        {
+            
+            strcpy(path, basePath);
+            strcat(path, "/");
+            strcat(path, dp->d_name);
+            strcpy(namaFilesNih[nomor], path);
+            nomor++;
+            recursive(path);
+        }
+    }
+
+    closedir(dir);
+}
 
 int main(int argc, char *argv[]) {
   
-  /*Perintah -f */
+    //Perintah "-f"
+    if (strcmp(argv[1],"-f")==0){  
+        perintah = argv[1];
+        int jumlah = 2;
+        int jalankan = 2;
+        while (jumlah < argc) {
+            pthread_create(&(thread[jumlah]), NULL, myFile, (char*)argv[jumlah]);
+            jumlah++;
+        }
+        while (jalankan < argc) {
+            pthread_join(thread[jalankan],NULL);
+            jalankan++;
+        }
+    }
+  
+    //Perintah "-d"
+    else if (strcmp(argv[1],"-d") == 0 ) { 
+        perintah = argv[1];
+        recursive(argv[2]);
+        for(int i=0; i<nomor; i++){
+            pthread_create(&(thread[i]), NULL, myFile, (char*)namaFilesNih[i]);
+        }
+        for(int i=0; i<nomor; i++){
+            pthread_join(thread[i],NULL);
+        }
+        if(keberhasilan == 1){
+            printf("Direktori sukses disimpan!\n");
+        }else{
+            printf("Yah, gagal disimpan :(\n");
+        }
+    }
 
-  //letak argumen pada char 1 akan dibandingkan dengan -f, jika sama maka akan diproses
-  if (strcmp(argv[1],"-f")==0){  
-    int jumlah = 2;
-    int jalankan = 2;
-    while (jumlah < argc) {
-      pthread_create(&(thread[jumlah]), NULL, myFile, (char*)argv[jumlah]);
-      jumlah++;
+    // Perintah "*"
+    else if (strcmp(argv[1],"*") == 0 ) { 
+        perintah = argv[1];
+        recursive(".");
+        for(int i=0; i<nomor; i++){
+            pthread_create(&(thread[i]), NULL, myFile, (char*)namaFilesNih[i]);
+        }
+        for(int i=0; i<nomor; i++){
+            pthread_join(thread[i],NULL);
+        }
+        if(keberhasilan == 1){
+            printf("Yah, gagal disimpan :(\n");
+        }else{
+            printf("Direktori sukses disimpan!\n");
+        }
     }
-    while (jalankan < argc) {
-      pthread_join(thread[jalankan],NULL);
-      jalankan++;
-    }
-  }
-  
-  /*Perintah -d */
-  else if (strcmp(argv[1],"-d") == 0 ) {       
-  }
-  
-  return 0;
+    
+    return 0;
 }
