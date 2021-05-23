@@ -645,13 +645,14 @@ Untuk melakukan traverse directory, maka dibuatkan fungsi recursive berikut.
       ```
   #### Input "-f"
   ![image](https://user-images.githubusercontent.com/83162422/119263925-3da7c780-bc0b-11eb-9f7c-c719060e8ed8.png)
+  
   #### Output "-f"
   ![image](https://user-images.githubusercontent.com/83162422/119263967-6d56cf80-bc0b-11eb-93e6-c07d9c681cc1.png)
 ![image](https://user-images.githubusercontent.com/83162422/119263982-7cd61880-bc0b-11eb-8991-0ffd46d3f63c.png)
- #### Input "-d"
  
  #### Output "-d"
  ![image](https://user-images.githubusercontent.com/83162422/119264073-d9393800-bc0b-11eb-93ea-d67c5cd3ed23.png)
+ 
  #### Output "*"
  ![image](https://user-images.githubusercontent.com/83162422/119264321-dc80f380-bc0c-11eb-9c75-856d5ed4ce3b.png)
 
