@@ -279,6 +279,9 @@ Panggil fungsi ketika terjadi deletion
 
 ![running log](https://user-images.githubusercontent.com/73324192/119247470-f3dfc280-bbb3-11eb-9545-9fad20f956e5.png)
 
+### Kendala
+Materi dirasa susah dan karena minggu praktikum berbarengan dengan minggu ets
+
 ## Soal 2
 ### 2.a
 #### Membuat program perkalian matrix (4x3 dengan 3x6) dan menampilkan hasilnya. Matriks nantinya akan berisi angka 1-20 (tidak perlu dibuat filter angka).
